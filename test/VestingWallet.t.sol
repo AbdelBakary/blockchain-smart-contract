@@ -29,11 +29,7 @@ contract MockERC20 {
         return true;
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) external returns (bool) {
+    function transferFrom(address from, address to, uint256 amount) external returns (bool) {
         require(balanceOf[from] >= amount, "Insufficient balance");
         require(allowance[from][msg.sender] >= amount, "Not allowed");
 
@@ -68,12 +64,7 @@ contract VestingWalletTest is Test {
 
     /// Création du vesting
     function testCreateVestingSchedule() public {
-        vestingWallet.createVestingSchedule(
-            beneficiary,
-            TOTAL_AMOUNT,
-            cliff,
-            duration
-        );
+        vestingWallet.createVestingSchedule(beneficiary, TOTAL_AMOUNT, cliff, duration);
 
         (
             address storedBeneficiary,
@@ -92,12 +83,7 @@ contract VestingWalletTest is Test {
 
     /// Réclamer avant le cliff → revert attendu
     function test_RevertIf_ClaimBeforeCliff() public {
-        vestingWallet.createVestingSchedule(
-            beneficiary,
-            TOTAL_AMOUNT,
-            cliff,
-            duration
-        );
+        vestingWallet.createVestingSchedule(beneficiary, TOTAL_AMOUNT, cliff, duration);
 
         vm.warp(cliff - 1);
         vm.prank(beneficiary);
@@ -108,12 +94,7 @@ contract VestingWalletTest is Test {
 
     /// Réclamer pendant le vesting
     function testClaimDuringVesting() public {
-        vestingWallet.createVestingSchedule(
-            beneficiary,
-            TOTAL_AMOUNT,
-            cliff,
-            duration
-        );
+        vestingWallet.createVestingSchedule(beneficiary, TOTAL_AMOUNT, cliff, duration);
 
         vm.warp(cliff + duration / 2);
         vm.prank(beneficiary);
@@ -125,12 +106,7 @@ contract VestingWalletTest is Test {
 
     /// Réclamer après la fin du vesting
     function testClaimAfterVestingEnd() public {
-        vestingWallet.createVestingSchedule(
-            beneficiary,
-            TOTAL_AMOUNT,
-            cliff,
-            duration
-        );
+        vestingWallet.createVestingSchedule(beneficiary, TOTAL_AMOUNT, cliff, duration);
 
         vm.warp(cliff + duration + 1);
         vm.prank(beneficiary);
